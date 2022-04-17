@@ -30,7 +30,7 @@
     </v-app-bar>
 
     <v-main>
-      <MainPane/>
+      <MainPane ref="main"></MainPane>
     </v-main>
   </v-app>
 </template>
@@ -48,6 +48,35 @@ export default {
   data: () => ({
     //
   }),
+  mounted() {
+    document.addEventListener('keydown', this.onKeydown)
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.onKeydown)
+  },
+
+  methods: {
+    onKeydown(event) {
+      var code;
+      switch(event.key){
+        case 'a':
+          code = 0;
+          break;
+        case 's':
+          code = 1;
+          break;
+        case 'd':
+          code = 2;
+          break;
+        case 'f':
+          code = 3;
+          break;
+        default:
+          return;
+      }
+      this.$refs.main.pushToggle(code);
+    }
+  }
 
 };
 </script>

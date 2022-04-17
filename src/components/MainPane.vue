@@ -6,7 +6,8 @@
       </v-col>
       <v-col>
         <TogglePane v-bind:which="tagSelected"
-        v-on:changeSelected="changeToggle"></TogglePane>
+        v-on:changeSelected="changeToggle"
+        ref = "toggle"></TogglePane>
       </v-col>
     </v-row>
   </v-container>
@@ -30,6 +31,9 @@
     methods: {
       changeToggle: function(selected){
         this.tagSelected = selected;
+      }, 
+      pushToggle: function(code){
+        this.$refs.toggle.pushToggle(code);
       }
     }
   }
