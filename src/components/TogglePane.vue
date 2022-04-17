@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <v-row class="text-center">
-        <v-btn-toggle v-model="toggleSelected" mandatory>
+        <v-btn-toggle v-model="toggleSelected" 
+        v-on:change="changeSelected" mandatory>
             <v-btn>ジャンル</v-btn>
             <v-btn>商品種別</v-btn>
             <v-btn>数量</v-btn>
@@ -22,5 +23,12 @@
     props: {
         "which": Number
     },
+
+    
+    methods: {
+        changeSelected: function(){
+        this.$emit("changeSelected", );
+        }
+    }
   }
 </script>

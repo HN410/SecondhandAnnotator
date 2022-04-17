@@ -5,7 +5,8 @@
         <TextPane v-bind:val="textData"></TextPane>
       </v-col>
       <v-col>
-        <TogglePane v-bind:which="tagSelected"></TogglePane>
+        <TogglePane v-bind:which="tagSelected"
+        v-on:changeSelected="changeToggle"></TogglePane>
       </v-col>
     </v-row>
   </v-container>
@@ -26,5 +27,10 @@
       TextPane,
       TogglePane
     },
+    methods: {
+      changeToggle: function(selected){
+        this.tagSelected = selected;
+      }
+    }
   }
 </script>
