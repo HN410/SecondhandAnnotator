@@ -71,6 +71,12 @@ export default {
         case 'f':
           code = 3;
           break;
+        case 'z':
+          this.$refs.main.addPage(-1);
+          return;
+        case 'v':
+          this.$refs.main.addPage(1);
+          return;
         default:
           return;
       }

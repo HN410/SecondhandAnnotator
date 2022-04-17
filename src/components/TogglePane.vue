@@ -31,6 +31,7 @@
         }, 
         pushToggle: function(code){
            this.toggleSelected = code;
+           this.changeSelected();
         }
     }
   }
