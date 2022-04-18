@@ -15,10 +15,7 @@
 </template>
 
 <script>
-const COLOR_LIGHTEN = " lighten-"
-const COLORS = ["blue", "green", "brown", "red"];
-const COLOR_DEFAULT = "grey lighten-5";
-
+  import Common from "./Common";
   export default {
     name: 'TextPane',
 
@@ -35,11 +32,11 @@ const COLOR_DEFAULT = "grey lighten-5";
                 var selected = self.selected[index];
                 if(typeof selected === "undefined"){
                     console.log("test");
-                    return COLOR_DEFAULT;
+                    return Common.COLOR_DEFAULT;
                 }else{
-                    var color = COLORS[selected[0]];
+                    var color = Common.COLORS[selected[0]];
                     if(selected[1] > 0){
-                        color = color + COLOR_LIGHTEN + (selected[1] * 2);
+                        color = color + Common.COLOR_LIGHTEN + (selected[1] * 2);
                     }
                     return color;
                 }
