@@ -31,7 +31,6 @@
             return function(index){
                 var selected = self.selected[index];
                 if(typeof selected === "undefined"){
-                    console.log("test");
                     return Common.COLOR_DEFAULT;
                 }else{
                     var color = Common.COLORS[selected[0]];
@@ -62,7 +61,6 @@
             }
         }, 
         addLabelAndSelected(index, click){
-            this.change = false;
             this.selected[index] = [this.nowTag, click];
             var text = this.text[index];
             if(this.nowTag in this.label){
@@ -77,9 +75,9 @@
                 // this.label[this.nowTag] = {};
                 // this.label[this.nowTag][click] =  [text];
             }
-            this.change = true;
         },
         buttonClicked: function(index, click){
+            this.change = false;
             if(typeof this.selected[index] === "undefined"){
                 // タグなし
                 this.addLabelAndSelected(index, click);
@@ -92,11 +90,14 @@
                     removeTag = this.selected[index][0];
                     removeClick = this.selected[index][1];
                     this.addLabelAndSelected(index, click);
+                }else{
+                    this.selected[index] = void 0;
                 }
                 // データ削除
                 this.label[removeTag][removeClick] = 
                     this.label[removeTag][removeClick].filter(item => item != this.text[index]);
             }
+            this.change = true;
             this.changeLabel();
         }, 
         changeLabel: function(){
