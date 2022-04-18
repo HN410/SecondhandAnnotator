@@ -26,7 +26,7 @@
             textData: [["test", "yes", "ahh"], ["aaa", "dasd", "asda"]], 
             labelData: {},
             tagSelected: 1, 
-            pageNumber: 1
+            pageNumber: 1, 
     }),
 
     components: {
@@ -49,7 +49,10 @@
       }, 
       changePage: function(page){
         this.pageNumber = page;
-        this.$refs.text.changePage();
+        var self = this;
+        this.$nextTick(() => {
+          self.$refs.text.changePage();
+        })
       }, 
       changeLabel: function(label){
         this.labelData[this.pageNumber-1] = label;
