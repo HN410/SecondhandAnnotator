@@ -1,38 +1,52 @@
 <template>
   <v-container>
     <v-row class="text-center">
-        <v-btn-toggle v-model="toggleSelected" 
-        v-on:change="changeSelected" mandatory>
-            <v-btn ref = "b0">ジャンル [a]</v-btn>
-            <v-btn ref = "b1">商品種別 [s]</v-btn>
-            <v-btn ref = "b2">数量 [d]</v-btn>
-            <v-btn ref = "b3">そのほか [f]</v-btn>
-        </v-btn-toggle>
+      <v-btn-toggle
+        v-model="toggleSelected"
+        v-on:change="changeSelected"
+        mandatory
+      >
+        <v-col v-for="(item, index) in tagList" :key="index">
+          <v-row>
+            <v-col>
+              <v-avatar v-if="toggleSelected==index" color="black" size= "10">  </v-avatar>
+              <v-avatar v-if="toggleSelected!=index" color="white" size= "10">  </v-avatar>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-btn :color="getColor(index)"> {{ item }}</v-btn>
+          </v-row>
+        </v-col>
+      </v-btn-toggle>
     </v-row>
   </v-container>
 </template>
 
 <script>
-  export default {
-    name: 'TogglePane',
+import Common from "./Common";
+export default {
+  name: "TogglePane",
 
-    data: () => ({
-        "toggleSelected": undefined,
-      
-    }),
-    props: {
-        "which": Number
+  data: () => ({
+    toggleSelected: undefined,
+    tagList: Common.TAG_LIST,
+  }),
+  props: {
+    which: Number,
+  },
+
+  methods: {
+    changeSelected: function () {
+      this.$emit("changeSelected", this.toggleSelected);
     },
-
-    
-    methods: {
-        changeSelected: function(){
-            this.$emit("changeSelected", this.toggleSelected);
-        }, 
-        pushToggle: function(code){
-           this.toggleSelected = code;
-           this.changeSelected();
-        }
-    }
-  }
+    pushToggle: function (code) {
+      this.toggleSelected = code;
+      this.changeSelected();
+    },
+    getColor: function (index) {
+      var color = Common.COLORS[index];
+      return color + Common.COLOR_LIGHTEN+2;
+    },
+  },
+};
 </script>
