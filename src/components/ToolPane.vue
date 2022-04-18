@@ -19,11 +19,10 @@
 
     data: () => ({
         pageNumber: 1,
-        pageMax: 5,
         file_text: undefined
       
     }),
-    props: ["labelData"],
+    props: ["labelData", "pageMax"],
 
     
     methods: {

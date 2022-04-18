@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row><ToolPane v-bind:labelData="this.labelData"
+    <v-row><ToolPane v-bind:labelData="this.labelData" v-bind:pageMax="this.pageMax"
      ref="tool" v-on:changePage="changePage" v-on:changeTextData="changeTextData"></ToolPane></v-row>
     <v-row class="text-center">
       <v-col>
@@ -28,6 +28,7 @@
             labelData: {},
             tagSelected: 1, 
             pageNumber: 1, 
+            pageMax: 2
 
     }),
 
@@ -58,6 +59,7 @@
       }, 
       changeTextData: function(textData){
         this.textData = textData;
+        this.pageMax = textData.length;
       }, 
       changeLabel: function(labelData){
         this.labelData = labelData;
