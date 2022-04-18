@@ -3,8 +3,8 @@
     <v-row><ToolPane ref="tool" v-on:changePage="changePage"></ToolPane></v-row>
     <v-row class="text-center">
       <v-col>
-        <TextPane v-bind:text="this.textData[this.pageNumber-1]" v-bind:nowTag="tagSelected" 
-        v-on:changeLabel="changeLabel"></TextPane>
+        <TextPane v-bind:text="this.textData[this.pageNumber-1]" v-bind:nowTag="this.tagSelected" 
+        v-on:changeLabel="changeLabel" ref="text"></TextPane>
       </v-col>
       <v-col>
         <TogglePane v-bind:which="tagSelected"
@@ -49,6 +49,7 @@
       }, 
       changePage: function(page){
         this.pageNumber = page;
+        this.$refs.text.changePage();
       }, 
       changeLabel: function(label){
         this.labelData[this.pageNumber-1] = label;
