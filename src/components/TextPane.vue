@@ -110,7 +110,9 @@ export default {
       this.change = true;
       this.changeLabel();
     },
-    changeLabel: function () {},
+    changeLabel: function () {
+      this.$emit("changeLabel", this.label);
+    },
     changePage: function () {
       this.change = false;
       this.selected = [];

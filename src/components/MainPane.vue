@@ -1,10 +1,11 @@
 <template>
   <v-container>
-    <v-row><ToolPane ref="tool" v-on:changePage="changePage"></ToolPane></v-row>
+    <v-row><ToolPane v-bind:labelData="this.labelData"
+     ref="tool" v-on:changePage="changePage" v-on:changeTextData="changeTextData"></ToolPane></v-row>
     <v-row class="text-center">
       <v-col>
         <TextPane v-bind:text="this.textData[this.pageNumber-1]" v-bind:nowTag="this.tagSelected" 
-        v-on:changeLabel="changeLabel" ref="text"></TextPane>
+         v-on:changeLabel="changeLabel" ref="text"></TextPane>
       </v-col>
       <v-col>
         <TogglePane v-bind:which="tagSelected"
@@ -27,6 +28,7 @@
             labelData: {},
             tagSelected: 1, 
             pageNumber: 1, 
+
     }),
 
     components: {
@@ -54,8 +56,11 @@
           self.$refs.text.changePage();
         })
       }, 
-      changeLabel: function(label){
-        this.labelData[this.pageNumber-1] = label;
+      changeTextData: function(textData){
+        this.textData = textData;
+      }, 
+      changeLabel: function(labelData){
+        this.labelData = labelData;
       }
     }
   }

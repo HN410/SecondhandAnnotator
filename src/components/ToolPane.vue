@@ -5,8 +5,10 @@
         <v-col><v-text-field type="number" v-model="pageNumber" @change="changePage"></v-text-field></v-col>
         <v-col><v-btn @click="nextPage"> &gt;&gt; [v]</v-btn></v-col>
         <v-spacer></v-spacer>
-        <v-col><v-btn>import</v-btn></v-col>
-        <v-col><v-btn>save</v-btn></v-col>
+        <v-col><v-file-input
+                  @change="onChangeFileInput"
+                >テキストデータセット</v-file-input></v-col>
+        <v-col><v-btn @click="download">save</v-btn></v-col>
     </v-row>
   </v-container>
 </template>
@@ -18,11 +20,10 @@
     data: () => ({
         pageNumber: 1,
         pageMax: 5,
+        file_text: undefined
       
     }),
-    props: {
-        "which": Number
-    },
+    props: ["labelData"],
 
     
     methods: {
@@ -43,6 +44,25 @@
                 this.pageNumber = this.pageMax;
             }
             this.$emit("changePage", this.pageNumber);
+        },
+        onChangeFileInput(file){
+            var reader = new FileReader();
+            reader.readAsText(file);
+            var self = this;
+            reader.onload = function(event){
+                var result = event.target.result;
+                var json = JSON.parse(result);
+                self.$emit("changeTextData", json);
+            }
+        }, 
+        download(){
+            var str = JSON.stringify(this.labelData);
+            var ary = str.split("");
+            var blob = new Blob(ary,{type:"text/plan"}); 
+            var link = document.createElement('a'); 
+            link.href = URL.createObjectURL(blob); 
+            link.download = 'data.json';
+            link.click();
         }
     }
   }
