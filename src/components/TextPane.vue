@@ -26,9 +26,11 @@ export default {
   name: "TextPane",
 
   data: () => ({
-    label: {}, // {タグ: {クリック: [テキスト]}}のディクショナリ
+    label: {}, // {タグ: {クリック: [[単語], 複数単語]}}のディクショナリ
+                // 複数単語は，{"先頭単語", [[単語列], ]}のディクショナリ
     selected: [], // どのインデックスがどの種のどのタグをつけているか [[ Tag, click], undefined, ...]など
     change: true,
+    firstSelected: [], /// ページが切り替わった直後のselectedの状態
   }),
   props: ["text", "nowTag"],
   computed: {
@@ -49,6 +51,16 @@ export default {
     },
   },
   methods: {
+    selectedCopy(selected){
+        // 二次元配列のディープコピー
+        var ans = [];
+        for(var index = 0; index < selected.length; ++index){
+            if(typeof selected[index] !== "undefined"){
+                ans[index] == Array.from(selected[index]);
+            }
+        }
+        return ans;
+    },
     buttonLClicked(index) {
       this.buttonClicked(index, 0);
     },
@@ -64,21 +76,36 @@ export default {
         this.buttonClicked(index, 2);
       }
     },
+    addLabel(index, click, tag, count){
+        // 使うことになる新しい変数を作っておく
+        var text = this.text[index];
+        var texts = this.text.slice(index, index + count);
+        var newAns = count > 1 ? {[text]: texts} : [text];
+        var newList = [　, ];
+        var ansInd = count > 1 ? 1 : 0;
+        newList[ansInd] = newAns;
+
+        if (tag in this.label) {
+            // このタグ初ではない
+            if (click in this.label[tag]) {
+                // クリック種も既にやった
+                if(count > 1){
+                    this.label[this.nowTag][click][1][text].push(texts);    
+                }else{
+                    this.label[this.nowTag][click][0].push(text);
+                }
+            } else {
+                this.$set(this.label[this.nowTag], click, newList);
+            }
+        } else {
+            this.$set(this.label, tag, {});
+            this.$set(this.label[tag], click, newList);
+        }
+    },
     addLabelAndSelected(index, click) {
       this.selected[index] = [this.nowTag, click];
-      var text = this.text[index];
-      if (this.nowTag in this.label) {
-        if (click in this.label[this.nowTag]) {
-          this.label[this.nowTag][click].push(text);
-        } else {
-          this.$set(this.label[this.nowTag], click, [text]);
-        }
-      } else {
-        this.$set(this.label, this.nowTag, {});
-        this.$set(this.label[this.nowTag], click, [text]);
-        // this.label[this.nowTag] = {};
-        // this.label[this.nowTag][click] =  [text];
-      }
+      
+      
     },
     buttonClicked: function (index, click) {
       this.change = false;
@@ -141,8 +168,32 @@ export default {
             }
         }
       }
+      this.firstSelected = this.selectedCopy(this.selected);
       this.change = true;
     },
+    pageSave: function(){
+        // ページを変える時に呼び出し，内容をセーブする
+        var len = Math.max(this.firstSelected.length, this.selected.length);
+        var index = 0;
+        while(index < len){
+            // 二単語以上を登録している場合，indexが一気に進む
+            if(!Common.arrayEqual(this.selected[index], this.firstSelected[index])){
+                // 違うのでそれを反映
+                if(typeof this.firstSelected[index] === "undefined"){
+                    // 単純な追加
+                }else{
+                    if(typeof this.selected[index] === "undefined"){
+                        // 削除のみ
+                    }else{
+
+                    }
+
+                }
+            }
+            ++index;
+        }
+        
+    }
   },
 };
 </script>
