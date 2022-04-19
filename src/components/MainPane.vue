@@ -90,7 +90,7 @@
         if(this.fileName in this.labelDataSet[0]){
           this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
         }
-
+        this.infoText = "LabelData loading is finished.";
       }, 
       changeLabel: function(labelData){
         this.labelData = labelData;
