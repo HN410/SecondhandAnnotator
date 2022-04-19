@@ -62,6 +62,7 @@
         this.nowTag = tag;
       }, 
       changePage: function(page){
+        this.$refs.text.savePage();
         this.pageNumber = page;
         var self = this;
         this.$nextTick(() => {
@@ -94,7 +95,10 @@
         this.labelData = labelData;
       }, 
       download: function(){
-        console.log("test");
+        this.$refs.text.savePage();
+        this.$nextTick(() => {
+          self.$refs.text.changePage();
+        })
         this.labelDataSet[0][this.fileName] = this.$refs.tool.getNowPage();
         this.labelDataSet[1] = this.labelData;
         var str = JSON.stringify(this.labelDataSet);
