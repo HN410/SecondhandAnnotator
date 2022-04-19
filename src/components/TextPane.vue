@@ -181,7 +181,34 @@ export default {
     changeLabel: function () {
       this.$emit("changeLabel", this.label);
     },
-
+    // changePageで，辞書内の語との最長一致があるか調べる, なければundefined
+    checkWordMatch: function(index, firstKey, secondKey){
+      var innerCheckList = this.label[firstKey][secondKey][1][this.text[index]];
+      for(var forthKeyInd = 0; forthKeyInd < innerCheckList.length; ++forthKeyInd){
+        // 各単語についてすべて一致するか調べる
+        var nowTag = innerCheckList[forthKeyInd];
+        if(nowTag.length + index > this.text.length){
+          // 長さがはみ出てしまうのでありえない
+          continue;
+        }
+        var matched = true;
+        for(var tagInd = 0; tagInd < nowTag.length; ++tagInd){
+          if(this.text[index + tagInd] !== nowTag[tagInd]){
+            matched = false;
+            break;
+          }
+        }
+        if(matched){
+          // firstKey, secondKeyの中では最長のものが見つかったので，ほかのkeyで
+          // より長いものがあるか探す
+          var maxTag = [firstKey, secondKey, nowTag.length];
+          var maxLen = nowTag.length;
+          return [maxTag, maxLen];
+        }
+      }
+      return void 0;
+    },
+    // ページ変更時，すでに辞書にあるデータをもとにラベル付けする
     changePage: function () { 
       this.change = false;
       this.selected = [];
@@ -223,30 +250,11 @@ export default {
                     maxLen = 1;
                   }else{
                     // 語の場合
-                    var innerCheckList = this.label[firstKey][secondKey][1][this.text[index]];
-                    for(var forthKeyInd = 0; forthKeyInd < innerCheckList.length; ++forthKeyInd){
-                      // 各単語についてすべて一致するか調べる
-                      var nowTag = innerCheckList[forthKeyInd];
-                      if(nowTag.length + index > this.text.length){
-                        // 長さがはみ出てしまうのでありえない
-                        continue;
-                      }
-                      var matched = true;
-                      for(var tagInd = 0; tagInd < nowTag.length; ++tagInd){
-                        if(this.text[index + tagInd] !== nowTag[tagInd]){
-                          matched = false;
-                          break;
-                        }
-                      }
-                      if(matched){
-                        // firstKey, secondKeyの中では最長のものが見つかったので，ほかのkeyで
-                        // より長いものがあるか探す
-                        maxTag = [firstKey, secondKey, nowTag.length];
-                        maxLen = nowTag.length;
-                        break;
-                      }
+                    var ans = this.checkWordMatch(index, firstKey, secondKey);
+                    if(typeof ans !== "undefined"){
+                      maxTag = ans[0];
+                      maxLen = ans[1];
                     }
-
                   }
               }
             }
@@ -268,6 +276,36 @@ export default {
       this.firstSelected = this.selectedCopy(this.selected);
       this.change = true;
     },
+    // savePageでタグを追加するかと消去するかを判断
+    judgeAddRemove: function(firstUnit, nowUnit){
+      var doRemove = false;
+      var doAdd = false;
+      if(typeof firstUnit === "undefined"){
+          // 単純な追加
+          doAdd = true;
+      }else{
+          // 前回に何かある
+          if(firstUnit[0] === Common.EXTENSION){
+            // 前は語の後ろ部分なので削除しなくてよい
+            if(typeof nowUnit !== "undefined"){
+              doAdd = true;
+            }
+          }else{
+            if(typeof nowUnit === "undefined"){
+                // 削除のみ
+                doRemove = true;
+            }else if(nowUnit[2] > 1){
+              // 語の追加 削除ナシ
+                doAdd = true;
+            }else{
+              // 単語の追加 削除する
+              doRemove = true;
+              doAdd = true;
+            }
+          }
+      }
+      return [doAdd, doRemove];
+    },
     savePage: function(){
         // ページを変える前に呼び出し，内容をセーブする
         var len = Math.max(this.firstSelected.length, this.selected.length);
@@ -278,32 +316,9 @@ export default {
             var nowUnit = this.selected[index];
             if(!Common.arrayEqual(nowUnit, firstUnit)){
                 // 違うのでそれを反映
-                var doRemove = false;
-                var doAdd = false;
-                if(typeof firstUnit === "undefined"){
-                    // 単純な追加
-                    doAdd = true;
-                }else{
-                    // 前回に何かある
-                    if(firstUnit[0] === Common.EXTENSION){
-                      // 前は語の後ろ部分なので削除しなくてよい
-                      if(typeof nowUnit !== "undefined"){
-                        doAdd = true;
-                      }
-                    }else{
-                      if(typeof nowUnit === "undefined"){
-                          // 削除のみ
-                          doRemove = true;
-                      }else if(nowUnit[2] > 1){
-                        // 語の追加 削除ナシ
-                          doAdd = true;
-                      }else{
-                        // 単語の追加 削除する
-                        doRemove = true;
-                        doAdd = true;
-                      }
-                    }
-                }
+                var doAddRemove = this.judgeAddRemove(firstUnit, nowUnit);
+                var doAdd = doAddRemove[0];
+                var doRemove = doAddRemove[1];
                 if(doRemove){
                   // データ削除 
                   var filtered = this.label[firstUnit[0]][firstUnit[1]];
