@@ -113,6 +113,7 @@ export default {
     changeLabel: function () {
       this.$emit("changeLabel", this.label);
     },
+
     changePage: function () {
       this.change = false;
       this.selected = [];
@@ -145,6 +146,12 @@ export default {
       }
       this.change = true;
     },
+    setLabelData(labelData){
+      this.label = labelData;
+    }, 
+    getLabelData(){
+      return this.label;
+    }
   },
 };
 </script>

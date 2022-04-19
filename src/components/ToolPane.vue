@@ -6,8 +6,11 @@
         <v-col><v-btn @click="nextPage"> &gt;&gt; [v]</v-btn></v-col>
         <v-spacer></v-spacer>
         <v-col><v-file-input
-                  @change="onChangeFileInput"
-                >テキストデータセット</v-file-input></v-col>
+                  @change="onChangeTextFileInput"
+                 label="テキストデータセット"></v-file-input></v-col>
+        <v-col><v-file-input
+                  @change="onChangeLabelFileInput"
+                  label="ラベルデータセット"></v-file-input></v-col>
         <v-col><v-btn @click="download">save</v-btn></v-col>
     </v-row>
   </v-container>
@@ -22,7 +25,7 @@
         file_text: undefined
       
     }),
-    props: ["labelData", "pageMax"],
+    props: ["pageMax"],
 
     
     methods: {
@@ -44,24 +47,39 @@
             }
             this.$emit("changePage", this.pageNumber);
         },
-        onChangeFileInput(file){
-            var reader = new FileReader();
-            reader.readAsText(file);
-            var self = this;
-            reader.onload = function(event){
-                var result = event.target.result;
-                var json = JSON.parse(result);
-                self.$emit("changeTextData", json);
+        onChangeTextFileInput(file){
+            if(typeof file !== "undefined"){
+                var reader = new FileReader();
+                var fileName = file.name;
+                reader.readAsText(file);
+                var self = this;
+                reader.onload = function(event){
+                    var result = event.target.result;
+                    var json = JSON.parse(result);
+                    self.$emit("changeTextData", [json, fileName]);
+                }
             }
         }, 
+        onChangeLabelFileInput(file){
+            if(typeof file !== "undefined"){
+                var reader = new FileReader();
+                reader.readAsText(file);
+                var self = this;
+                reader.onload = function(event){
+                    var result = event.target.result;
+                    var json = JSON.parse(result);
+                    self.$emit("changeLabelData", json);
+                }
+            }
+        },
         download(){
-            var str = JSON.stringify(this.labelData);
-            var ary = str.split("");
-            var blob = new Blob(ary,{type:"text/plan"}); 
-            var link = document.createElement('a'); 
-            link.href = URL.createObjectURL(blob); 
-            link.download = 'data.json';
-            link.click();
+            this.$emit("download");
+        }, 
+        getNowPage(){
+            return this.pageNumber;
+        }, 
+        setNowPage(page){
+            this.pageNumber = page;
         }
     }
   }
