@@ -5,8 +5,13 @@
         <v-col><v-text-field type="number" v-model="pageNumber" @change="changePage"></v-text-field></v-col>
         <v-col><v-btn @click="nextPage"> &gt;&gt; [v]</v-btn></v-col>
         <v-spacer></v-spacer>
-        <v-col><v-btn>import</v-btn></v-col>
-        <v-col><v-btn>save</v-btn></v-col>
+        <v-col><v-file-input
+                  @change="onChangeTextFileInput"
+                 label="テキストデータセット"></v-file-input></v-col>
+        <v-col><v-file-input
+                  @change="onChangeLabelFileInput"
+                  label="ラベルデータセット"></v-file-input></v-col>
+        <v-col><v-btn @click="download">save</v-btn></v-col>
     </v-row>
   </v-container>
 </template>
@@ -17,12 +22,10 @@
 
     data: () => ({
         pageNumber: 1,
-        pageMax: 5,
+        file_text: undefined
       
     }),
-    props: {
-        "which": Number
-    },
+    props: ["pageMax"],
 
     
     methods: {
@@ -43,6 +46,40 @@
                 this.pageNumber = this.pageMax;
             }
             this.$emit("changePage", this.pageNumber);
+        },
+        onChangeTextFileInput(file){
+            if(typeof file !== "undefined"){
+                var reader = new FileReader();
+                var fileName = file.name;
+                reader.readAsText(file);
+                var self = this;
+                reader.onload = function(event){
+                    var result = event.target.result;
+                    var json = JSON.parse(result);
+                    self.$emit("changeTextData", [json, fileName]);
+                }
+            }
+        }, 
+        onChangeLabelFileInput(file){
+            if(typeof file !== "undefined"){
+                var reader = new FileReader();
+                reader.readAsText(file);
+                var self = this;
+                reader.onload = function(event){
+                    var result = event.target.result;
+                    var json = JSON.parse(result);
+                    self.$emit("changeLabelData", json);
+                }
+            }
+        },
+        download(){
+            this.$emit("download");
+        }, 
+        getNowPage(){
+            return this.pageNumber;
+        }, 
+        setNowPage(page){
+            this.pageNumber = page;
         }
     }
   }

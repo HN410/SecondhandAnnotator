@@ -10,7 +10,6 @@
           :key="index"
           @click.left="buttonLClicked(index)"
           @click.right="buttonRClicked(index)"
-          @click.middle="buttonMClicked(index)"
           :color="getColor(index)"
           >{{ item }}
         </v-btn>
@@ -64,15 +63,9 @@ export default {
     buttonLClicked(index) {
       this.buttonClicked(index, 0);
     },
-    buttonMClicked(index) {
-      // ジャンルに対してしかない
-      if (this.nowTag == 0) {
-        this.buttonClicked(index, 1);
-      }
-    },
     buttonRClicked(index) {
       // 数量以外
-      if (this.nowTag != 2) {
+      if (this.nowTag != 3 && this.nowTag != 1) {
         this.buttonClicked(index, 2);
       }
     },
@@ -137,7 +130,10 @@ export default {
       this.change = true;
       this.changeLabel();
     },
-    changeLabel: function () {},
+    changeLabel: function () {
+      this.$emit("changeLabel", this.label);
+    },
+
     changePage: function () {
       this.change = false;
       this.selected = [];
@@ -192,7 +188,12 @@ export default {
             }
             ++index;
         }
-        
+    },
+    setLabelData(labelData){
+      this.label = labelData;
+    }, 
+    getLabelData(){
+      return this.label;
     }
   },
 };

@@ -71,6 +71,9 @@ export default {
         case 'f':
           code = 3;
           break;
+        case 'g':
+          code = 4;
+          break;
         case 'z':
           this.$refs.main.addPage(-1);
           return;

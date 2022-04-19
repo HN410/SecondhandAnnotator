@@ -1,15 +1,24 @@
 <template>
   <v-container>
-    <v-row><ToolPane ref="tool" v-on:changePage="changePage"></ToolPane></v-row>
+    <v-row><ToolPane v-bind:pageMax="this.pageMax" v-on:download="download"
+     ref="tool" v-on:changePage="changePage" 
+     v-on:changeTextData="changeTextData"
+     v-on:changeLabelData="changeLabelData"></ToolPane></v-row>
     <v-row class="text-center">
       <v-col>
         <TextPane v-bind:text="this.textData[this.pageNumber-1]" v-bind:nowTag="this.tagSelected" 
-        v-on:changeLabel="changeLabel" ref="text"></TextPane>
+         v-on:changeLabel="changeLabel" ref="text" width="600"></TextPane>
       </v-col>
       <v-col>
-        <TogglePane v-bind:which="tagSelected"
-        v-on:changeSelected="changeToggle"
-        ref = "toggle"></TogglePane>
+        <v-row>
+          <TogglePane v-bind:which="tagSelected"
+          v-on:changeSelected="changeToggle"
+          ref = "toggle"></TogglePane>
+        </v-row>
+        <v-row>
+          <v-text-field readonly :value="infoText"></v-text-field>
+
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -25,8 +34,13 @@
     data: () => ({
             textData: [["test", "yes", "ahh"], ["aaa", "dasd", "asda"]], 
             labelData: {},
+            fileName: "",
+            labelDataSet: [{}, []], // {ファイルパス: index}とラベルデータを格納
             tagSelected: 1, 
             pageNumber: 1, 
+            pageMax: 2, 
+            infoText: "Information"
+
     }),
 
     components: {
@@ -54,8 +68,42 @@
           self.$refs.text.changePage();
         })
       }, 
-      changeLabel: function(label){
-        this.labelData[this.pageNumber-1] = label;
+      changeTextData: function(list){
+        var textData = list[0];
+        this.fileName = list[1];
+        this.textData = textData;
+        this.pageMax = textData.length;
+        if(typeof this.labelDataSet[0] !== "undefined" && 
+          this.fileName in this.labelDataSet[0])
+        {
+          this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
+        }
+        this.infoText = "TextData loading is finished.";
+      }, 
+      // 以前出力したデータセットの読み込み
+      changeLabelData: function(labelDataSet){
+        this.labelDataSet = labelDataSet;
+        this.labelData = labelDataSet[1];
+        this.$refs.text.setLabelData(this.labelData);
+        if(this.fileName in this.labelDataSet[0]){
+          this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
+        }
+
+      }, 
+      changeLabel: function(labelData){
+        this.labelData = labelData;
+      }, 
+      download: function(){
+        console.log("test");
+        this.labelDataSet[0][this.fileName] = this.$refs.tool.getNowPage();
+        this.labelDataSet[1] = this.labelData;
+        var str = JSON.stringify(this.labelDataSet);
+        var ary = str.split("");
+        var blob = new Blob(ary,{type:"text/plan"}); 
+        var link = document.createElement('a'); 
+        link.href = URL.createObjectURL(blob); 
+        link.download = 'data.json';
+        link.click();
       }
     }
   }
