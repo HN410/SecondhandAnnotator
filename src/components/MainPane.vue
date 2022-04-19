@@ -39,7 +39,8 @@
             tagSelected: 1, 
             pageNumber: 1, 
             pageMax: 2, 
-            infoText: "Information"
+            infoText: "Information", 
+            pressedCtrl: false
 
     }),
 
@@ -109,6 +110,6 @@
         link.download = 'data.json';
         link.click();
       }
-    }
+    }, 
   }
 </script>

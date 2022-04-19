@@ -49,10 +49,10 @@ export default {
     //
   }),
   mounted() {
-    document.addEventListener('keydown', this.onKeydown)
+    document.addEventListener('keydown', this.onKeydown);
   },
   beforeDestroy() {
-    document.removeEventListener('keydown', this.onKeydown)
+    document.removeEventListener('keydown', this.onKeydown);
   },
 
   methods: {

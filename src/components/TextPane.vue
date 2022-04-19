@@ -8,8 +8,10 @@
           class="ma-1"
           v-for="(item, index) in text"
           :key="index"
-          @click.left="buttonLClicked(index)"
-          @click.right="buttonRClicked(index)"
+          @click.left.shift="buttonLShiftClicked(index)"
+          @click.left.exact="buttonLClicked(index)"
+          @click.right.exact="buttonRClicked(index)"
+          @click.right.shift="buttonRShiftClicked(index)"
           :color="getColor(index)"
           :outlined="getOutlined(index)"
           >{{ item }}
@@ -30,7 +32,7 @@ export default {
                 // 複数単語は，{"先頭単語", [[単語列], ]}のディクショナリ．ただし，単語列のリストはその長さで降順にソートされている
     selected: [], // どのインデックスがどの種のどのタグをつけているか [[ Tag, click, count], undefined, ...]など
     change: true,
-    firstSelected: [], /// ページが切り替わった直後のselectedの状態
+    firstSelected: [], /// ページが切り替わった直後のselectedの状態, 
     extension : Common.EXTENSION
   }),
   props: ["text", "nowTag"],
@@ -49,7 +51,7 @@ export default {
             while(innerIndex > 0){
               --innerIndex;
               if(self.selected[innerIndex][0] !== Common.EXTENSION){
-                color = self.selected[innerIndex][0];
+                color = Common.COLORS[self.selected[innerIndex][0]];
                 break;
               }
             }
@@ -83,19 +85,28 @@ export default {
         return ans;
     },
     buttonLClicked(index) {
-      this.buttonClicked(index, 0);
+      this.buttonClicked(index, 0, false);
+    },
+    buttonLShiftClicked(index) {
+      this.buttonClicked(index, 0, true);
     },
     buttonRClicked(index) {
       // 数量以外
       if (this.nowTag != 3 && this.nowTag != 1) {
-        this.buttonClicked(index, 2);
+        this.buttonClicked(index, 2, false);
+      }
+    },
+    buttonRShiftClicked(index) {
+      // 数量以外
+      if (this.nowTag != 3 && this.nowTag != 1) {
+        this.buttonClicked(index, 2, true);
       }
     },
     addLabel(index, tag, click, count){
         // 使うことになる新しい変数を作っておく
         var text = this.text[index];
         var texts = this.text.slice(index, index + count);
-        var newAns = count > 1 ? {[text]: texts} : [text];
+        var newAns = count > 1 ? {[text]: [texts]} : [text];
         var newList = [[], {}];
         var ansInd = count > 1 ? 1 : 0;
         newList[ansInd] = newAns;
@@ -108,6 +119,10 @@ export default {
                     // このとき必ずソートも行う
                     // 長さが長いものほど先に来るように
                     var list = this.label[tag][click][1][text];
+                    if(typeof list === "undefined"){
+                      this.label[tag][click][1][text] = [texts];
+                      list = this.label[tag][click][1][text];
+                    }
                     list.push(texts);    
                     list.sort((a,b) => b.length - a.length);
                 }else{
@@ -121,25 +136,45 @@ export default {
             this.$set(this.label[tag], click, newList);
         }
     },
-    addSelected(index, click) {
-      this.selected[index] = [this.nowTag, click, 1];
+    addSelected(index, click, shift) {
+      if(!shift){
+        this.selected[index] = [this.nowTag, click, 1];
+      }else{
+        var nowCount = this.selected[index][2];
+        if(index + nowCount < this.text.length && typeof this.selected[index + nowCount] === "undefined"){
+          this.selected[index] = [this.nowTag, click, nowCount + 1];
+          this.selected[index + nowCount] = [Common.EXTENSION, 0, 1];
+        }
+      }
     },
-    buttonClicked: function (index, click) { //ctrlclickを追加
+    deleteSelected(index){
+      var count = this.selected[index][2];
+      for(var step = 0; step < count; ++step){
+        this.selected[index+step] = void 0;
+      }
+    },
+    buttonClicked(index, click, shift) { //ctrlclickを追加
       this.change = false;
       if (typeof this.selected[index] === "undefined") {
         // タグなし
-        this.addSelected(index, click);
+        this.addSelected(index, click, false);
       } else {
         // すでになにかは登録済み
         if(this.selected[index][0] == this.nowTag && 
           this.selected[index][1] == click) {
-            // 削除
-            this.selected[index] = void 0;
-        }else{
-            // 上書き
-            this.addSelected(index, click);
+            if(shift){
+              // 追加
+              this.addSelected(index, click, true);
+            }else{
+              // 削除
+              this.deleteSelected(index);
+            }
+        }else if(this.selected[index][0] !== Common.EXTENSION){
+            // EXTENSION以外を選択したなら上書き
+            // 語の場合もあるので一度消す
+            this.deleteSelected(index);
+            this.addSelected(index, click, false);
         }
-
       }
       this.change = true;
     },
@@ -252,7 +287,9 @@ export default {
                     // 前回に何かある
                     if(firstUnit[0] === Common.EXTENSION){
                       // 前は語の後ろ部分なので削除しなくてよい
-                      doAdd = true;
+                      if(typeof nowUnit !== "undefined"){
+                        doAdd = true;
+                      }
                     }else{
                       if(typeof nowUnit === "undefined"){
                           // 削除のみ
@@ -270,19 +307,15 @@ export default {
                 if(doRemove){
                   // データ削除 
                   var filtered = this.label[firstUnit[0]][firstUnit[1]];
-                  var removeIndex = undefined;
-                  var removee ;
                   if(firstUnit[2] > 1){
                     // 語のとき
-                    filtered = filtered[1];
-                    removeIndex = this.text[index];
-                    removee = this.text.slice(index, index + firstUnit[2]);
+                    var removeIndex = this.text[index];
+                    var removee = this.text.slice(index, index + firstUnit[2]);
+                    filtered[1][removeIndex] = filtered[1][removeIndex].filter((item) => !Common.arrayEqual(item, removee));
                   }else{
                     // 単語のとき
-                    removeIndex = 0;
-                    removee = this.text[index];
+                    filtered[0] = filtered[0].filter((item) => item !== this.text[index]);
                   }
-                  filtered[removeIndex] = filtered[removeIndex].filter((item) => item !== removee);
                 }
                 if(doAdd){
                   // 追加
