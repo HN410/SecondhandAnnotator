@@ -6,6 +6,7 @@
         <v-btn
           elevation="1"
           class="ma-1"
+          style="text-transform: none"
           v-for="(item, index) in text"
           :key="index"
           @click.left.shift="buttonLShiftClicked(index)"
