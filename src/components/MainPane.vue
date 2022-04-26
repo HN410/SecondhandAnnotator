@@ -32,7 +32,7 @@
     name: 'MainPane',
 
     data: () => ({
-            textData: [["test", "yes", "ahh"], ["aaa", "dasd", "asda"]], 
+            textData: [[""], [""]], 
             labelData: {},
             fileName: "",
             labelDataSet: [{}, []], // {ファイルパス: index}とラベルデータを格納
@@ -80,7 +80,7 @@
         {
           this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
         }
-        this.infoText = "TextData loading is finished.";
+        this.infoText = "Text data loading is finished.";
       }, 
       // 以前出力したデータセットの読み込み
       changeLabelData: function(labelDataSet){
@@ -90,7 +90,7 @@
         if(this.fileName in this.labelDataSet[0]){
           this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
         }
-        this.infoText = "LabelData loading is finished.";
+        this.infoText = "Label data loading is finished.";
       }, 
       changeLabel: function(labelData){
         this.labelData = labelData;
