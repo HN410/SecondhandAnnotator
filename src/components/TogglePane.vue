@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row class="text-center">
+    <v-row class="text-center" >
       <v-btn-toggle
         v-model="toggleSelected"
         v-on:change="changeSelected"
@@ -14,7 +14,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-btn :color="getColor(index)"> {{ item }}</v-btn>
+            <v-btn :color="getColor(index)" small height=50> {{ item }}</v-btn>
           </v-row>
         </v-col>
       </v-btn-toggle>

@@ -1,7 +1,7 @@
 const COLOR_LIGHTEN = " lighten-"
-const COLORS = ["blue", "green", "brown", "red", "orange"];
+const COLORS = ["purple", "blue", "green", "brown", "red", "orange"];
 const COLOR_DEFAULT = "grey lighten-5";
-const TAG_LIST = ["ジャンル [a]","無関係[s]", "商品種別 [d]", "数量 [f]", "そのほか [g]", ];
+const TAG_LIST = ["弱ジャンル [q]", "ジャンル [a]","無関係[s]", "商品種別 [d]", "数量 [f]", "その他 [g]", ];
 const EXTENSION = -1;
 function arrayEqual(a, b) {
     if (a === void 0){

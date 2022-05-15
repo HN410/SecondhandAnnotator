@@ -30,20 +30,23 @@ export default {
     onKeydown(event) {
       var code;
       switch(event.key){
-        case 'a':
+        case "q":
           code = 0;
-          break;
-        case 's':
+          break
+        case 'a':
           code = 1;
           break;
-        case 'd':
+        case 's':
           code = 2;
           break;
-        case 'f':
+        case 'd':
           code = 3;
           break;
-        case 'g':
+        case 'f':
           code = 4;
+          break;
+        case 'g':
+          code = 5;
           break;
         case 'z':
           this.$refs.main.addPage(-1);
