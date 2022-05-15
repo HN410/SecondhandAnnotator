@@ -19,6 +19,17 @@
           <v-text-field readonly :value="infoText"></v-text-field>
 
         </v-row>
+        <v-row>
+          <v-col>
+            <v-img 
+              contain
+              lazy-src=""
+              max-height = "350"
+              max-width = "450"
+              v-bind:src="this.nowImage">
+            </v-img>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -33,6 +44,8 @@
 
     data: () => ({
             textData: [[""], [""]], 
+            imageData: ["", ""],
+            nowImage: "",
             labelData: {},
             fileName: "",
             labelDataSet: [{}, []], // {ファイルパス: index}とラベルデータを格納
@@ -66,14 +79,16 @@
         this.$refs.text.savePage();
         this.pageNumber = page;
         var self = this;
+        this.reloadImage();
         this.$nextTick(() => {
           self.$refs.text.changePage();
         })
       }, 
       changeTextData: function(list){
-        var textData = list[0];
+        var textData = list[0][0];
         this.fileName = list[1];
         this.textData = textData;
+        this.imageData = list[0][1];
         this.pageMax = textData.length;
         if(typeof this.labelDataSet[0] !== "undefined" && 
           this.fileName in this.labelDataSet[0])
@@ -111,6 +126,9 @@
         link.href = URL.createObjectURL(blob); 
         link.download = 'data.json';
         link.click();
+      }, 
+      reloadImage: function(){
+        this.nowImage = this.imageData[this.pageNumber-1];
       }
     }, 
   }

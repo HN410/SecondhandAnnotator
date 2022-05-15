@@ -51,6 +51,9 @@ export default {
         case 'v':
           this.$refs.main.addPage(1);
           return;
+        case `r`:
+          this.$refs.main.reloadImage();
+          return;
         default:
           return;
       }
