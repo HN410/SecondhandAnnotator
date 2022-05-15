@@ -80,7 +80,7 @@
         {
           this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
         }else{
-          this.$refs.resetPage();
+          this.$refs.tool.resetPage();
         }
         this.infoText = "Text data loading is finished.";
       }, 
