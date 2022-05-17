@@ -1,8 +1,9 @@
 <template>
   <v-container>
-    <v-row><ToolPane v-bind:pageMax="this.pageMax" v-on:download="download"
+    <v-row><ToolPane v-bind:pageMax="this.pageMax" v-on:download="download" 
      ref="tool" v-on:changePage="changePage" 
      v-on:changeTextData="changeTextData"
+     v-on:saveJson="saveJson"
      v-on:changeLabelData="changeLabelData"></ToolPane></v-row>
     <v-row class="text-center">
       <v-col>
@@ -45,6 +46,8 @@
   import TextPane from './TextPane';
   import TogglePane from './TogglePane';
   import ToolPane from './ToolPane';
+  const DEFAULT_FILE_NAME = "data.json";
+  
   export default {
     name: 'MainPane',
 
@@ -122,14 +125,19 @@
       changeLabel: function(labelData){
         this.labelData = labelData;
       }, 
-      download: function(){
+      makeDownloadStr: function(){
         this.$refs.text.savePage();
+        var self = this;
         this.$nextTick(() => {
           self.$refs.text.changePage();
         })
         this.labelDataSet[0][this.fileName] = this.$refs.tool.getNowPage();
         this.labelDataSet[1] = this.labelData;
         var str = JSON.stringify(this.labelDataSet);
+        return str;
+      },
+      download: function(){
+        var str = this.makeDownloadStr();
         var ary = str.split("");
         var blob = new Blob(ary,{type:"text/plan"}); 
         var link = document.createElement('a'); 
@@ -137,6 +145,12 @@
         link.download = 'data.json';
         link.click();
       }, 
+      // アプリがあるフォルダのdata.jsonに保存
+      saveJson: function(){
+        var data = this.makeDownloadStr();
+        console.log("ts");
+        window.requires.writeData(DEFAULT_FILE_NAME, data);
+      },
       reloadImage: function(){
         this.nowImage = this.imageData[this.pageNumber-1];
       }, 

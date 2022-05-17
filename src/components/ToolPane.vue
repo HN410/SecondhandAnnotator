@@ -12,7 +12,8 @@
         <v-col><v-file-input
                   @change="onChangeLabelFileInput"
                   label="ラベルデータセット"></v-file-input></v-col>
-        <v-col><v-btn @click="download">save</v-btn></v-col>
+        <v-col><v-btn @click="download">SAVE as</v-btn></v-col>
+        <v-col><v-btn @click="saveJson">SAVE</v-btn></v-col>
     </v-row>
   </v-container>
 </template>
@@ -79,6 +80,9 @@
         },
         download(){
             this.$emit("download");
+        }, 
+        saveJson(){
+            this.$emit("saveJson");
         }, 
         getNowPage(){
             return this.pageNumber;
