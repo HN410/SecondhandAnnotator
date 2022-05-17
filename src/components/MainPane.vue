@@ -8,6 +8,10 @@
       <v-col>
         <TextPane v-bind:text="this.textData[this.pageNumber-1]" v-bind:nowTag="this.tagSelected" 
          v-on:changeLabel="changeLabel" ref="text" width="600"></TextPane>
+        <v-row>
+          <v-col><a v-bind:href="this.nowLink" 
+                target="_blank" rel="noopener noreferrer">リンク</a></v-col>
+        </v-row>
       </v-col>
       <v-col>
         <v-row>
@@ -20,15 +24,17 @@
 
         </v-row>
         <v-row>
+          <v-spacer></v-spacer>
           <v-col>
             <v-img 
               contain
               lazy-src=""
               max-height = "350"
-              max-width = "450"
+              max-width = "400"
               v-bind:src="this.nowImage">
             </v-img>
           </v-col>
+          <v-spacer></v-spacer>
         </v-row>
       </v-col>
     </v-row>
@@ -46,6 +52,8 @@
             textData: [[""], [""]], 
             imageData: ["", ""],
             nowImage: "",
+            linkData: ["", ""],
+            nowLink: "",
             labelData: {},
             fileName: "",
             labelDataSet: [{}, []], // {ファイルパス: index}とラベルデータを格納
@@ -80,6 +88,7 @@
         this.pageNumber = page;
         var self = this;
         this.reloadImage();
+        this.reloadLink();
         this.$nextTick(() => {
           self.$refs.text.changePage();
         })
@@ -89,6 +98,7 @@
         this.fileName = list[1];
         this.textData = textData;
         this.imageData = list[0][1];
+        this.linkData = list[0][2];
         this.pageMax = textData.length;
         if(typeof this.labelDataSet[0] !== "undefined" && 
           this.fileName in this.labelDataSet[0])
@@ -129,6 +139,9 @@
       }, 
       reloadImage: function(){
         this.nowImage = this.imageData[this.pageNumber-1];
+      }, 
+      reloadLink: function(){
+        this.nowLink = this.linkData[this.pageNumber-1];
       }
     }, 
   }
