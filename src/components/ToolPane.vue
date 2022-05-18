@@ -4,6 +4,7 @@
         <v-col><v-btn @click="previousPage"> &lt;&lt; [z]</v-btn></v-col>
         <v-col><v-btn @click="resetPage"> リセ  </v-btn></v-col>
         <v-col><v-text-field type="number" v-model="pageNumber" @change="changePage"></v-text-field></v-col>
+        <v-col><v-btn @click="memoOutlier"> メモ  </v-btn></v-col>
         <v-col><v-btn @click="nextPage"> &gt;&gt; [v]</v-btn></v-col>
         <v-spacer></v-spacer>
         <v-col><v-file-input
@@ -80,6 +81,9 @@
         },
         download(){
             this.$emit("download");
+        }, 
+        memoOutlier(){
+            this.$emit("memoOutlier");
         }, 
         saveJson(){
             this.$emit("saveJson");

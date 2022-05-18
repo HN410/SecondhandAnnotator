@@ -4,6 +4,7 @@
      ref="tool" v-on:changePage="changePage" 
      v-on:changeTextData="changeTextData"
      v-on:saveJson="saveJson"
+     v-on:memoOutlier="memoOutlier"
      v-on:changeLabelData="changeLabelData"></ToolPane></v-row>
     <v-row class="text-center">
       <v-col>
@@ -60,6 +61,7 @@
             labelData: {},
             fileName: "",
             labelDataSet: [{}, []], // {ファイルパス: index}とラベルデータを格納
+            outlierList: [], 
             tagSelected: 1, 
             pageNumber: 1, 
             pageMax: 2, 
@@ -116,6 +118,7 @@
       changeLabelData: function(labelDataSet){
         this.labelDataSet = labelDataSet;
         this.labelData = labelDataSet[1];
+        this.outlierList = labelDataSet[2];
         this.$refs.text.setLabelData(this.labelData);
         if(this.fileName in this.labelDataSet[0]){
           this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
@@ -133,6 +136,7 @@
         })
         this.labelDataSet[0][this.fileName] = this.$refs.tool.getNowPage();
         this.labelDataSet[1] = this.labelData;
+        this.labelDataSet[2] = this.outlierList;
         var str = JSON.stringify(this.labelDataSet);
         return str;
       },
@@ -145,6 +149,11 @@
         link.download = 'data.json';
         link.click();
       }, 
+      // 後でデータ検査に使えそうなテキストを保存しておく
+      memoOutlier: function(){
+        var textList = this.textData[this.pageNumber - 1];
+        this.outlierList.push(textList);
+      },
       // アプリがあるフォルダのdata.jsonに保存
       saveJson: function(){
         var data = this.makeDownloadStr();
