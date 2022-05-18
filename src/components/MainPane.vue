@@ -60,7 +60,7 @@
             nowLink: "",
             labelData: {},
             fileName: "",
-            labelDataSet: [{}, []], // {ファイルパス: index}とラベルデータを格納
+            labelDataSet: [{}, [], [], ""], // {ファイルパス: index}とラベルデータを格納
             outlierList: [], 
             tagSelected: 1, 
             pageNumber: 1, 
@@ -119,11 +119,16 @@
         this.labelDataSet = labelDataSet;
         this.labelData = labelDataSet[1];
         this.outlierList = labelDataSet[2];
+        var beforeFile = labelDataSet[3];
         this.$refs.text.setLabelData(this.labelData);
         if(this.fileName in this.labelDataSet[0]){
           this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
         }
-        this.infoText = "Label data loading is finished.";
+        if(beforeFile === ""){
+          this.infoText = "Label data loading is finished.";
+        }else{
+          this.infoText = "The last checked file is \" " + beforeFile + "\"";
+        }
       }, 
       changeLabel: function(labelData){
         this.labelData = labelData;
@@ -137,6 +142,7 @@
         this.labelDataSet[0][this.fileName] = this.$refs.tool.getNowPage();
         this.labelDataSet[1] = this.labelData;
         this.labelDataSet[2] = this.outlierList;
+        this.labelDataSet[3] = this.fileName;
         var str = JSON.stringify(this.labelDataSet);
         return str;
       },
