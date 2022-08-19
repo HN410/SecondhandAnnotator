@@ -92,14 +92,14 @@ export default {
       this.buttonClicked(index, 0, true);
     },
     buttonRClicked(index) {
-      // 数量, 無関係以外
-      if (this.nowTag != 4 && this.nowTag != 2) {
+      // 数量, 無関係, 無情報以外
+      if (this.nowTag != 6 && this.nowTag != 4 && this.nowTag != 2) {
         this.buttonClicked(index, 2, false);
       }
     },
     buttonRShiftClicked(index) {
-      // 数量, 無関係以外
-      if (this.nowTag != 4 && this.nowTag != 2) {
+      // 数量, 無関係，無情報以外
+      if (this.nowTag != 6 && this.nowTag != 4 && this.nowTag != 2) {
         this.buttonClicked(index, 2, true);
       }
     },
