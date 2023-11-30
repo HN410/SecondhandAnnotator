@@ -1,5 +1,5 @@
 const COLOR_LIGHTEN = " lighten-"
-const COLORS = ["purple", "blue", "green", "brown", "red", "orange", "blue-grey"];
+const COLORS = ["purple", "blue", "green", "brown", "red", "orange", "blue-grey" + COLOR_LIGHTEN + 2];
 const COLOR_DEFAULT = "grey lighten-5";
 const TAG_LIST = ["弱ジャンル [q]", "ジャンル [a]","無関係[s]", "商品種別 [d]", "数量 [f]", "その他 [g]", "無情報 [h]"];
 const EXTENSION = -1;

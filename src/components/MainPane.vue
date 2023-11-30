@@ -112,7 +112,7 @@
         }else{
           this.$refs.tool.resetPage();
         }
-        this.infoText = "Text data loading is finished.";
+        this.infoText = "Text data has been loaded.";
       }, 
       // 以前出力したデータセットの読み込み
       changeLabelData: function(labelDataSet){
@@ -125,7 +125,7 @@
           this.$refs.tool.setNowPage(this.labelDataSet[0][this.fileName]);
         }
         if(beforeFile === ""){
-          this.infoText = "Label data loading is finished.";
+          this.infoText = "Label data has been loaded.";
         }else{
           this.infoText = "The last checked file is \" " + beforeFile + "\"";
         }

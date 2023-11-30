@@ -45,7 +45,11 @@ export default {
     },
     getColor: function (index) {
       var color = Common.COLORS[index];
-      return color + Common.COLOR_LIGHTEN+2;
+      if(index == 6){
+        return color
+      }else{
+        return color + Common.COLOR_LIGHTEN+2;
+      }
     },
   },
 };
